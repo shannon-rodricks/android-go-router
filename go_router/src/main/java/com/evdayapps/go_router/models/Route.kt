@@ -8,27 +8,41 @@ typealias IntentBuilder = (
     context: Context,
     pathParams: Map<String, String>,
     queryParams: Map<String, String>,
-    arguments: Map<String, String>
+    arguments: Map<String, Any>
 ) -> Intent
 
 typealias FragmentBuilder = (
     context: Context,
     pathParams: Map<String, String>,
     queryParams: Map<String, String>,
-    arguments: Map<String, String>
+    arguments: Map<String, Any>
 ) -> Fragment?
 
+/**
+ * Primary route class
+ * @property path The path for the route
+ * @property name An optional name for the route
+ * @property appendTrailingSlash
+ * @property intentBuilder An intent builder for building an activity intent
+ * @property fragmentBuilder A builder for building a fragment
+ * @property subroutes List of subroutes under this route (this route's path will be prefixed to their path)
+ *
+ * TODO Redirection logic (per route and global)
+ */
 class Route(
     var path: String,
     var name: String? = null,
-    var optionalTrailingSlash: Boolean = true,
+    var appendTrailingSlash: Boolean = true,
     var intentBuilder: IntentBuilder? = null,
     var fragmentBuilder: FragmentBuilder? = null,
     var subroutes: List<Route> = emptyList()
 ) {
     init {
-        assert(path.endsWith("/") || subroutes.isEmpty(), lazyMessage = {
-            "Path `$path` (name: $name) should end with /"
-        })
+        assert(!path.startsWith("/")) {
+            "$path should not start with /"
+        }
+        assert(!path.endsWith("/")) {
+            "$path should not end with /"
+        }
     }
 }

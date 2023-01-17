@@ -1,6 +1,7 @@
 package com.evdayapps.go_router
 
 import android.content.Context
+import com.evdayapps.go_router.models.MatchResult
 import com.evdayapps.go_router.models.MatchRoute
 import com.evdayapps.go_router.models.Route
 
@@ -12,7 +13,7 @@ class Router(
     private val routes: List<MatchRoute>
 
     init {
-        routes = generateRoutes(baseRoute, "")
+        routes = generateMatchRoutes(baseRoute, "")
         if(enableDebugging) {
             for(route in routes) {
                 println(route.path)
@@ -20,20 +21,22 @@ class Router(
         }
     }
 
-    private fun generateRoutes(route: Route, currentPath: String): List<MatchRoute> {
+    private fun generateMatchRoutes(route: Route, currentPath: String): List<MatchRoute> {
         val list = mutableListOf<MatchRoute>()
-        list.add(MatchRoute(route = route, path = currentPath + route.path))
+        val newPath = if(currentPath != "/") "$currentPath/${route.path}" else "/${route.path}"
+        list.add(MatchRoute(route = route, path = newPath))
         for (subroute in route.subroutes) {
-            list.addAll(generateRoutes(route = subroute, currentPath = currentPath + route.path))
+            list += generateMatchRoutes(route = subroute, currentPath = newPath)
         }
 
         return list
     }
 
-    fun getMatch(path : String) : MatchRoute? {
+    fun getMatch(path : String) : MatchResult? {
         for(route in routes) {
-            if(route.matches(path)) {
-                return route
+            val matchResult = route.matches(path)
+            if(matchResult != null) {
+                return matchResult
             }
         }
 

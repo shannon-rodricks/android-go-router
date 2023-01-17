@@ -8,20 +8,20 @@ import org.junit.Test
 
 class RouterTest {
 
-    lateinit var route : Route
-    lateinit var router : Router
+    lateinit var route: Route
+    lateinit var router: Router
 
     @Before
     fun setup() {
         route = Route(
-            path = "/",
+            path = "",
             subroutes = listOf(
                 Route(
-                    path = "events/",
+                    path = "events",
                     name = "event-list",
                     subroutes = listOf(
                         Route(
-                            path = "(?<slug>[\\w]+)/",
+                            path = "(?<slug>[\\w]+)",
                             name = "event-detail",
                             subroutes = listOf(
                                 Route(
@@ -44,26 +44,43 @@ class RouterTest {
             "/events/test",
             "/events/test/"
         ).forEach {
-            val input = router.getMatch(it)
-            assertNotNull(input)
-            assertEquals("event-detail", input?.route?.name)
+            val matchResult = router.getMatch(it)
+            assertNotNull(matchResult)
+            assertEquals("event-detail", matchResult?.route?.name)
 
             // Test path params extraction
-            val params = input?.pathParams(it)
-            assertEquals("test", params!!["slug"])
+            assertEquals("test", matchResult?.pathParams!!["slug"])
         }
     }
 
     @Test
     fun `Test event report route match`() {
         val path = "/events/test/report"
-        val input = router.getMatch(path)
-        assertNotNull(input)
-        assertEquals("event-report", input?.route?.name)
+        val matchResult = router.getMatch(path)
+        assertNotNull(matchResult)
+        assertEquals("event-report", matchResult?.route?.name)
 
         // Test path params extraction
-        val params = input?.pathParams(path)
-        assertEquals("test", params!!["slug"])
+        assertEquals("test", matchResult?.pathParams!!["slug"])
+    }
+
+    @Test
+    fun `Test event details route with query params`() {
+        listOf(
+            "/events/test",
+            "/events/test/"
+        ).forEach {
+            val matchResult = router.getMatch("$it?action=none&timestamp=001")
+            assertNotNull(matchResult)
+            assertEquals("event-detail", matchResult?.route?.name)
+
+            // Test path params extraction
+            assertEquals("test", matchResult?.pathParams!!["slug"])
+
+            // Test query params extraction
+            assertEquals("none", matchResult.queryParams["action"])
+            assertEquals("001", matchResult.queryParams["timestamp"])
+        }
     }
 
 }
