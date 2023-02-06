@@ -131,5 +131,5 @@ MatchResult(
 ```
 
 
-[^1]: Sometimes, we might require redirection based on temporary business requirements, to divert one path to another
+[^1]: Sometimes, we might require redirection based on temporary business requirements, to divert one path to another. The plan is to have a simple `oldPath -> newPath` mapping structure, with\without inheritance. 
 [^2]: A path like `/events/create` should be prioritised over `/events/(?<slug>[\w]+)` when querying `/events/create`
