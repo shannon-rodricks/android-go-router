@@ -109,7 +109,7 @@ which will result in this heirarchy
 
 ## Routing
 The primary class is `Router`.
-This class is intantiated with a base route (and subroutes under it) like
+This class is instantiated with a base route (and subroutes under it) like
 `val router = Router(baseRoute)`
 
 To query a match we do
