@@ -6,9 +6,9 @@ import androidx.fragment.app.Fragment
 
 typealias IntentBuilder = (
     context: Context,
-    pathParams: Map<String, String>,
-    queryParams: Map<String, String>,
-    arguments: Map<String, Any>
+    pathParams: Map<String, String>?,
+    queryParams: Map<String, String>?,
+    arguments: Map<String, Any>?
 ) -> Intent
 
 typealias FragmentBuilder = (
@@ -19,7 +19,9 @@ typealias FragmentBuilder = (
 ) -> Fragment?
 
 /**
- * Primary route class
+ * Raw route class, for definition
+ * This class is processed by [Router] to generate entire paths
+ *
  * @property path The path for the route
  * @property name An optional name for the route
  * @property appendTrailingSlash
@@ -38,11 +40,7 @@ class Route(
     var subroutes: List<Route> = emptyList()
 ) {
     init {
-        assert(!path.startsWith("/")) {
-            "$path should not start with /"
-        }
-        assert(!path.endsWith("/")) {
-            "$path should not end with /"
-        }
+        assert(!path.startsWith("/")) { "$path should not start with /" }
+        assert(!path.endsWith("/")) { "$path should not end with /" }
     }
 }

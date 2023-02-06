@@ -15,6 +15,7 @@ class RouterTest {
     fun setup() {
         route = Route(
             path = "",
+            name = "root",
             subroutes = listOf(
                 Route(
                     path = "events",
@@ -24,10 +25,21 @@ class RouterTest {
                             path = "(?<slug>[\\w]+)",
                             name = "event-detail",
                             subroutes = listOf(
-                                Route(
-                                    path = "report",
-                                    name = "event-report",
-                                )
+                                Route(path = "report", name = "event-report")
+                            )
+                        ),
+                    )
+                ),
+                Route(path = "events/create", name = "create-event"),
+                Route(
+                    path = "movies",
+                    name = "movie-list",
+                    subroutes = listOf(
+                        Route(
+                            path = "(?<slug>[\\w]+)",
+                            name = "movie-detail",
+                            subroutes = listOf(
+                                Route(path = "report", name = "movie-report")
                             )
                         ),
                     )
@@ -46,7 +58,7 @@ class RouterTest {
         ).forEach {
             val matchResult = router.getMatch(it)
             assertNotNull(matchResult)
-            assertEquals("event-detail", matchResult?.route?.name)
+            assertEquals("event-detail", matchResult?.mRoute?.name)
 
             // Test path params extraction
             assertEquals("test", matchResult?.pathParams!!["slug"])
@@ -58,7 +70,7 @@ class RouterTest {
         val path = "/events/test/report"
         val matchResult = router.getMatch(path)
         assertNotNull(matchResult)
-        assertEquals("event-report", matchResult?.route?.name)
+        assertEquals("event-report", matchResult?.mRoute?.name)
 
         // Test path params extraction
         assertEquals("test", matchResult?.pathParams!!["slug"])
@@ -72,7 +84,7 @@ class RouterTest {
         ).forEach {
             val matchResult = router.getMatch("$it?action=none&timestamp=001")
             assertNotNull(matchResult)
-            assertEquals("event-detail", matchResult?.route?.name)
+            assertEquals("event-detail", matchResult?.mRoute?.name)
 
             // Test path params extraction
             assertEquals("test", matchResult?.pathParams!!["slug"])
