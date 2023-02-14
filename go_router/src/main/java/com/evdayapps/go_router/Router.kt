@@ -40,11 +40,7 @@ class Router(
         val list = mutableListOf<MatchRoute>()
 
         val newPath = if (currentPath != "/") "$currentPath/${route.path}" else "/${route.path}"
-        val matchRoute = MatchRoute(
-            route = route,
-            path = newPath,
-            depth = depth
-        )
+        val matchRoute = MatchRoute(route = route, path = newPath, depth = depth)
         list.add(matchRoute)
 
         for (subroute in route.subroutes) {
@@ -61,15 +57,17 @@ class Router(
     }
 
     fun getMatch(path: String): MatchResult? {
-        if(enableDebugging) {
+        if (enableDebugging) {
             println("Processing: $path")
         }
 
+        // Return the first match found in the list
+        // This logic might need to be revisited to handle the exact match condition
         for (route in routes) {
             val matchResult = route.matches(path)
             if (matchResult != null) {
-                if(enableDebugging) {
-                    println(matchResult)
+                if (enableDebugging) {
+                    println("Match: $matchResult")
                 }
                 return matchResult
             }
